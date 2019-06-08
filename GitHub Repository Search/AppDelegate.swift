@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  GitHub Repository Search
 //
-//  Created by TheSquirrelScribe on 9/6/19.
+//  Created by Keenan Hauber on 9/6/19.
 //  Copyright © 2019 Keenan Hauber. All rights reserved.
 //
 
