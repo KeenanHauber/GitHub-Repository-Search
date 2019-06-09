@@ -14,6 +14,8 @@ protocol GitHubSiteServing {
     /// the completion handler will be called synchronously and immediately. This may be overriden by setting `refresh` to true, in which case
     /// the service will fetch new data anyway.
     func fetchRepositories(forOrganisationNamed organisationName: String, refresh: Bool, completionHandler: @escaping  (Result<[Repository], Error>) -> Void)
+    
+    func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void)
 }
 
 // Default implementation
@@ -33,13 +35,45 @@ final class GitHubSiteService: GitHubSiteServing {
         return URL(string: organisation.name + "/repos", relativeTo: organisationsURL)
     }
     
+    private static let userSearchURL = URL(staticString: "https://api.github.com/search/users/")
+    
+    private static func organisationSearchURL(for searchTerm: String) -> URL? {
+        return URL(string: "https://api.github.com/search/users?q=\(searchTerm)+in:login+type:org")
+    }
+    
     // MARK: - Properties
     
-    private var search: String?
+    private var lastOrganisationSearchTerm: String?
     // TODO: Remove dummy data
-    private var organisations: [Organisation] = [Organisation(name: "spring", repositories: nil)]
+    private var organisations: [Organisation] = []
     
     // MARK: - GitHubSiteServing
+    
+    func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {
+        guard let organisationSearchURL = GitHubSiteService.organisationSearchURL(for: searchTerm) else {
+            return
+        }
+        
+        if refresh == false && lastOrganisationSearchTerm == searchTerm {
+            completionHandler(.success(organisations))
+            return
+        } else {
+            fetchData(from: organisationSearchURL) { result in
+                switch result {
+                case let .success(data):
+                    do {
+                        let organisations = try JSONDecoder().decode(SearchResults<Organisation>.self, from: data).items
+                        self.organisations = organisations
+                        completionHandler(.success(organisations))
+                    } catch {
+                        completionHandler(.failure(error))
+                    }
+                case let .failure(error):
+                    completionHandler(.failure(error))
+                }
+            }
+        }
+    }
     
     func fetchRepositories(forOrganisationNamed organisationName: String, refresh: Bool = false, completionHandler: @escaping  (Result<[Repository], Error>) -> Void) {
         guard let organisation = organisations.filter({ $0.name == organisationName }).first,
@@ -101,7 +135,7 @@ final class GitHubSiteService: GitHubSiteServing {
             case 404:
                 completionHandler(.failure(.notFound))
             default:
-                print(response.statusCode)
+                print("Unknown response code: \(response.statusCode)")
             }
         }
         

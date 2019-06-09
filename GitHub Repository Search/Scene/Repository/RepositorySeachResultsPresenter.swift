@@ -28,7 +28,11 @@ final class RepositorySearchResultsPresenter: RepositorySearchResultsPresenting 
     // MARK: - RepositorySearchResultsPresenting
     
     func presentRepositories(_ repositories: [Repository]) {
-        display?.displayResults(repositories.map { $0.name })
+        if repositories.count > 0 {
+            display?.displayResults(repositories.map { $0.name })
+        } else {
+            display?.displayResults(["No repositories found"])
+        }
     }
     
     func presentError(_ error: Error) {

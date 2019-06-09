@@ -21,31 +21,33 @@ final class RepositorySearchResultsInteractor: RepositorySearchResultsInteractin
     
     private let service: GitHubSiteServing
     private let presenter: RepositorySearchResultsPresenting
+    private let router: RepositorySearchResultsRouting
     
     // MARK: - Properties
     
+    private let organisation: Organisation
     private var repositories: [Repository] = []
     
     // MARK: - Lifecycle
     
-    init(service: GitHubSiteServing, presenter: RepositorySearchResultsPresenting) {
+    init(organisation: Organisation, service: GitHubSiteServing, presenter: RepositorySearchResultsPresenting, router: RepositorySearchResultsRouting) {
+        self.organisation = organisation
         self.service = service
         self.presenter = presenter
+        self.router = router
     }
     
     // MARK: - RepositorySearchResultsInteracting
     
     func loadResults() {
-        service.fetchRepositories(forOrganisationNamed: "spring", completionHandler: { result in
-            DispatchQueue.main.sync {
-                switch result {
-                case let .success(repositories):
-                    self.repositories = repositories
-                    self.presenter.presentRepositories(repositories)
-                case let .failure(error):
-                    self.repositories = []
-                    self.presenter.presentError(error)
-                }
+        service.fetchRepositories(forOrganisationNamed: organisation.name, completionHandler: { result in
+            switch result {
+            case let .success(repositories):
+                self.repositories = repositories
+                self.presenter.presentRepositories(repositories)
+            case let .failure(error):
+                self.repositories = []
+                self.presenter.presentError(error)
             }
         })
     }

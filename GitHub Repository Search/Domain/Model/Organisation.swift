@@ -8,7 +8,12 @@
 
 import Foundation
 
-struct Organisation {
+struct Organisation: Decodable {
     let name: String
+    
     var repositories: [Repository]?
+    
+    enum CodingKeys: String, CodingKey {
+        case name = "login"
+    }
 }

@@ -24,7 +24,7 @@ final class RepositorySearchViewController: UITableViewController, RepositorySea
     // MARK: - Properties
     
     /// A list of GitHub Repositories
-    var searchResults: [String] = []
+    private var repositories: [String] = []
     
     // MARK: - Lifecycle
         
@@ -43,8 +43,10 @@ final class RepositorySearchViewController: UITableViewController, RepositorySea
     // MARK: - RepositorySearchResultsDisplay
     
     func displayResults(_ results: [String]) {
-        searchResults = results
-        tableView.reloadData()
+        executeOnMain(target: self) { display in
+            display.repositories = results
+            display.tableView.reloadData()
+        }
     }
 
     // MARK: - UITableViewDataSource
@@ -54,13 +56,13 @@ final class RepositorySearchViewController: UITableViewController, RepositorySea
     }
 
     override func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchResults.count
+        return repositories.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: RepositorySearchViewController.reuseIdentifier, for: indexPath)
 
-        cell.textLabel?.text = searchResults[indexPath.row]
+        cell.textLabel?.text = repositories[indexPath.row]
         cell.textLabel?.lineBreakMode = .byWordWrapping
         cell.textLabel?.numberOfLines = 0
 

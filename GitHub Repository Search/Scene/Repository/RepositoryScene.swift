@@ -13,11 +13,15 @@ final class RepositoryScene {
     // MARK: - Dependencies
     
     private let gitHubSiteService: GitHubSiteServing
+    private let organisation: Organisation
+    private let wireframe: Wireframe
     
     // MARK: - Lifecycle
     
-    init(gitHubSiteService: GitHubSiteServing) {
+    init(organisation: Organisation, gitHubSiteService: GitHubSiteServing, wireframe: Wireframe) {
         self.gitHubSiteService = gitHubSiteService
+        self.organisation = organisation
+        self.wireframe = wireframe
     }
     
     // MARK: - Builder
@@ -25,7 +29,8 @@ final class RepositoryScene {
     func build() -> UIViewController {
         let viewController = RepositorySearchViewController()
         let presenter = RepositorySearchResultsPresenter(display: viewController)
-        viewController.interactor = RepositorySearchResultsInteractor(service: gitHubSiteService, presenter: presenter)
+        let router = RepositorySearchResultsRouter(sourceViewController: viewController)
+        viewController.interactor = RepositorySearchResultsInteractor(organisation: organisation, service: gitHubSiteService, presenter: presenter, router: router)
         return viewController
     }
 }
