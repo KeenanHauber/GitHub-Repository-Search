@@ -8,16 +8,23 @@
 
 import UIKit
 
-final class RepositorySearchViewController: UITableViewController {
+protocol RepositorySearchResultsDisplay: AnyObject {
+    func displayResults(_ results: [String])
+}
+
+final class RepositorySearchViewController: UITableViewController, RepositorySearchResultsDisplay {
     
     // MARK: - Constants
     
     static private let reuseIdentifier = "tableCellViewReuseIdentifier"
     
+    // MARK: - Dependencies
+    var interactor: RepositorySearchResultsInteracting!
+    
     // MARK: - Properties
     
     /// A list of GitHub Repositories
-    var searchResults: [Repository] = []
+    var searchResults: [String] = []
     
     // MARK: - Lifecycle
         
@@ -29,6 +36,15 @@ final class RepositorySearchViewController: UITableViewController {
         tableView.rowHeight = UITableView.automaticDimension
         
         tableView.tableFooterView = UIView()
+        
+        interactor.loadResults()
+    }
+    
+    // MARK: - RepositorySearchResultsDisplay
+    
+    func displayResults(_ results: [String]) {
+        searchResults = results
+        tableView.reloadData()
     }
 
     // MARK: - UITableViewDataSource
@@ -44,7 +60,7 @@ final class RepositorySearchViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: RepositorySearchViewController.reuseIdentifier, for: indexPath)
 
-        cell.textLabel?.text = searchResults[indexPath.row].name
+        cell.textLabel?.text = searchResults[indexPath.row]
         cell.textLabel?.lineBreakMode = .byWordWrapping
         cell.textLabel?.numberOfLines = 0
 
@@ -54,6 +70,6 @@ final class RepositorySearchViewController: UITableViewController {
     // MARK: - UITableViewDelegate
     
     override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
-        UIApplication.shared.open(searchResults[indexPath.row].htmlURL)
+        interactor.selectResult(at: indexPath.row)
     }
 }

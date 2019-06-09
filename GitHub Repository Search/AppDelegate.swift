@@ -14,19 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        let viewController = RepositorySearchViewController()
-        let service = GitHubSiteService()
-        service.fetchRepositories(forOrganisationNamed: "spring", completionHandler: { result in
-            DispatchQueue.main.sync {
-                switch result {
-                case let .success(repositories):
-                    viewController.searchResults = repositories
-                case let .failure(error):
-                    print(error.localizedDescription)
-                }
-                viewController.tableView.reloadData()
-            }
-        })
+        let viewController = RepositoryScene(gitHubSiteService: GitHubSiteService()).build()
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = viewController

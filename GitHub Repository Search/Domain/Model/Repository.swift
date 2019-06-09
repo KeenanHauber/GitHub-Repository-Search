@@ -9,9 +9,12 @@
 import Foundation
 
 struct Repository: Decodable {
+    /// The name of the repository
     let name: String
     
+    /// A `URL` pointing to the human-readable view of the repository
     let url: URL
+    /// A `URL` pointing to the API location of the repository
     let htmlURL: URL
     
     // MARK: - Decodable
