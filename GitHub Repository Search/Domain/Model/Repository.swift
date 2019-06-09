@@ -8,7 +8,18 @@
 
 import Foundation
 
-struct Repository {
-    let url: URL
+struct Repository: Decodable {
     let name: String
+    
+    let url: URL
+    let htmlURL: URL
+    
+    // MARK: - Decodable
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        
+        case url
+        case htmlURL = "html_url"
+    }
 }

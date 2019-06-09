@@ -16,7 +16,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let viewController = RepositorySearchViewController()
         let service = GitHubSiteService()
-        service.fetchRepositories(forOrganisationNamed: "", completionBlock: { _ in })
+        service.fetchRepositories(forOrganisationNamed: "spring", completionHandler: { result in
+            DispatchQueue.main.sync {
+                switch result {
+                case let .success(repositories):
+                    viewController.searchResults = repositories
+                case let .failure(error):
+                    print(error.localizedDescription)
+                }
+                viewController.tableView.reloadData()
+            }
+        })
         
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.rootViewController = viewController
@@ -50,4 +60,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
-
