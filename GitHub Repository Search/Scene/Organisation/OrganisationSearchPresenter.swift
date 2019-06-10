@@ -8,14 +8,10 @@
 
 import Foundation
 
-enum FetchState {
-    case fetching
-    case failed
-    case success
-}
-
 protocol OrganisationSearchPresenting {
+    /// Formats the organisation data for presentation and instructs the `OrganisationSearchDisplay` to display it appropriately
     func presentOrganisations(_ organisations: [Organisation])
+    /// Instructs the `OrganisationSearchDisplay` on actions that should be taken based on the state
     func presentFetchState(_ fetchState: FetchState)
 }
 
@@ -34,8 +30,8 @@ final class OrganisationSearchPresenter: OrganisationSearchPresenting {
     
     // MARK: - OrganisationSearchPresenting
     
-    #warning("incomplete implementation")
     func presentFetchState(_ fetchState: FetchState) {
+        #warning("incomplete implementation")
 //        switch fetchState {
 //            
 //        }

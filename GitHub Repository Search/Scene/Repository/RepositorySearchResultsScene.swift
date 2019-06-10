@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class RepositoryScene {
+final class RepositorySearchResultsScene {
     
     // MARK: - Dependencies
     
@@ -26,6 +26,7 @@ final class RepositoryScene {
     
     // MARK: - Builder
     
+    /// Constructs the repository search results scene and returns its view controller so it may be presented
     func build() -> UIViewController {
         let viewController = RepositorySearchViewController()
         let presenter = RepositorySearchResultsPresenter(display: viewController)

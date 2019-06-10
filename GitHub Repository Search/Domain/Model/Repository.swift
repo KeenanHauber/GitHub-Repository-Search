@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Maps to the GitHub API's response structure describing a repository
 struct Repository: Decodable {
     /// The name of the repository
     let name: String

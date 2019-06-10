@@ -8,7 +8,7 @@
 
 import Foundation
 
-
+/// A dependency injection helper object that constructs scenes, re-using dependencies
 final class Wireframe {
     
     // MARK: - Dependencies
@@ -27,7 +27,7 @@ final class Wireframe {
         return OrganisationSearchScene(gitHubSiteService: gitHubSiteService, wireframe: self)
     }
     
-    func repositorySearchScene(organisation: Organisation) -> RepositoryScene {
-        return RepositoryScene(organisation: organisation, gitHubSiteService: gitHubSiteService, wireframe: self)
+    func repositorySearchScene(organisation: Organisation) -> RepositorySearchResultsScene {
+        return RepositorySearchResultsScene(organisation: organisation, gitHubSiteService: gitHubSiteService, wireframe: self)
     }
 }

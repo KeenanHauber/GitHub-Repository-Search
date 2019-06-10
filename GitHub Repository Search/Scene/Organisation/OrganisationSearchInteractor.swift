@@ -23,6 +23,7 @@ final class OrganisationSearchInteractor: OrganisationSearchInteracting {
     
     // MARK: - Properties
     
+    /// A list of organisations retrieved by the last successful fetch
     private var organisations: [Organisation] = []
     
     // MARK: - Lifecycle
@@ -44,7 +45,7 @@ final class OrganisationSearchInteractor: OrganisationSearchInteracting {
                 self.presenter.presentOrganisations(organisations)
             case .failure(let error):
                 print(error.localizedDescription)
-                self.presenter.presentFetchState(.failed)
+                self.presenter.presentFetchState(.failure)
             }
         })
         presenter.presentFetchState(.fetching)

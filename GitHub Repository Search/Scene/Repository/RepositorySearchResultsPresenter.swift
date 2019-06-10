@@ -9,7 +9,9 @@
 import Foundation
 
 protocol RepositorySearchResultsPresenting {
+    ///
     func presentRepositories(_ repositories: [Repository])
+    /// Displays the given error to the user
     func presentError(_ error: Error)
 }
 
@@ -31,6 +33,7 @@ final class RepositorySearchResultsPresenter: RepositorySearchResultsPresenting 
         if repositories.count > 0 {
             display?.displayResults(repositories.map { $0.name })
         } else {
+            #warning("May allow invalid selection: Display assumes results are valid.")
             display?.displayResults(["No repositories found"])
         }
     }

@@ -7,11 +7,14 @@
 //
 
 import Foundation
-#warning("Interactor should not depend on UIKit")
-import UIKit
 
 protocol RepositorySearchResultsInteracting {
-    func loadResults()
+
+    /// Retrieves a list of repositories for the given organisation and forwards it to the presenter to format for display
+    func loadOrganisationRepositories()
+    
+    /// Processes the selection of the repository at the given array index
+    /// - parameter index: the index of the selected repository
     func selectResult(at index: Int)
 }
 
@@ -25,7 +28,9 @@ final class RepositorySearchResultsInteractor: RepositorySearchResultsInteractin
     
     // MARK: - Properties
     
+    /// The organisation that owns the repositories that will be searched for and presented
     private let organisation: Organisation
+    /// Cached repositories from the previous fetch
     private var repositories: [Repository] = []
     
     // MARK: - Lifecycle
@@ -39,7 +44,7 @@ final class RepositorySearchResultsInteractor: RepositorySearchResultsInteractin
     
     // MARK: - RepositorySearchResultsInteracting
     
-    func loadResults() {
+    func loadOrganisationRepositories() {
         service.fetchRepositories(forOrganisationNamed: organisation.name, completionHandler: { result in
             switch result {
             case let .success(repositories):
@@ -53,6 +58,6 @@ final class RepositorySearchResultsInteractor: RepositorySearchResultsInteractin
     }
     
     func selectResult(at index: Int) {
-        UIApplication.shared.open(repositories[index].htmlURL)
+        router.routeToURL(repositories[index].htmlURL)
     }
 }

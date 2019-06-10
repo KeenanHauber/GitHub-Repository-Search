@@ -24,6 +24,7 @@ final class OrganisationSearchScene {
     
     // MARK: - Builder
     
+    /// Constructs the organisation search scene and returns its view controller so it may be presented
     func build() -> UIViewController {
         let viewController = OrganisationSearchViewController()
         let presenter = OrganisationSearchPresenter(display: viewController)

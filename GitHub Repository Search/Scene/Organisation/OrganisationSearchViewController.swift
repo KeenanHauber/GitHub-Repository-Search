@@ -9,6 +9,7 @@
 import UIKit
 
 protocol OrganisationSearchDisplay: AnyObject {
+    /// Displays the list of organisations on-screen
     func displayOrganisations(_ organisations: [String])
 }
 
@@ -24,6 +25,7 @@ class OrganisationSearchViewController: UITableViewController, OrganisationSearc
     
     // MARK: - Properties
     
+    /// The list of organisations to display on-screen
     private var organisations: [String] = []
     
     // MARK: - Lifecycle

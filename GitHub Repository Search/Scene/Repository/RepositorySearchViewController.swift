@@ -9,7 +9,10 @@
 import UIKit
 
 protocol RepositorySearchResultsDisplay: AnyObject {
+    /// Displays the list of repository names to the user
+    /// - parameter results: a list of repository names returned by the search
     func displayResults(_ results: [String])
+    #warning("No valid way to handle error cases provided")
 }
 
 final class RepositorySearchViewController: UITableViewController, RepositorySearchResultsDisplay {
@@ -23,7 +26,7 @@ final class RepositorySearchViewController: UITableViewController, RepositorySea
     
     // MARK: - Properties
     
-    /// A list of GitHub Repositories
+    /// A list of GitHub Repositories to be displayed
     private var repositories: [String] = []
     
     // MARK: - Lifecycle
@@ -37,7 +40,7 @@ final class RepositorySearchViewController: UITableViewController, RepositorySea
         
         tableView.tableFooterView = UIView()
         
-        interactor.loadResults()
+        interactor.loadOrganisationRepositories()
     }
     
     // MARK: - RepositorySearchResultsDisplay

@@ -10,11 +10,14 @@ import Foundation
 
 /// An abstraction of network communications designed to give access to the GitHub API.
 protocol GitHubSiteServing {
-    /// Returns a list of public repositories for the given organisation, in order of creation. If a list of repositories have already been fetched,
-    /// the completion handler will be called synchronously and immediately. This may be overriden by setting `refresh` to true, in which case
-    /// the service will fetch new data anyway.
+    /// Returns a list of public repositories for the given organisation, in order of creation. If a list of repositories
+    /// have already been fetched, the completion handler will be called synchronously and immediately. This may be overriden
+    /// by setting `refresh` to true, in which case the service will fetch new data anyway.
     func fetchRepositories(forOrganisationNamed organisationName: String, refresh: Bool, completionHandler: @escaping  (Result<[Repository], Error>) -> Void)
     
+    /// Returns a list of organisations containing the given search term in their name.
+    ///
+    /// - parameter searchTerm: the text to 
     func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void)
 }
 
@@ -25,26 +28,35 @@ extension GitHubSiteServing {
     }
 }
 
+/// The default implementation of the `GitHubSiteServing` protocol
 final class GitHubSiteService: GitHubSiteServing {
     
     // MARK: - Constants
     
+    /// Returns the base URL for retrieving a specific organisation's data. This URL is invalid on its own.
     private static let organisationsURL = URL(staticString: "https://api.github.com/orgs/")
     
+    /// Attempts to construct a URL which will fetch all repositories for the given organisation
     private static func organisationRepositoriesURL(for organisation: Organisation) -> URL? {
         return URL(string: organisation.name + "/repos", relativeTo: organisationsURL)
     }
     
+    /// Returns the base URL for searching user accounts. This URL is invalid on its own.
     private static let userSearchURL = URL(staticString: "https://api.github.com/search/users/")
     
+    /// Attempts to construct a URL to search for organisations containing the given search term in their name
     private static func organisationSearchURL(for searchTerm: String) -> URL? {
         return URL(string: "https://api.github.com/search/users?q=\(searchTerm)+in:login+type:org")
     }
     
     // MARK: - Properties
     
+    /// The last search term.
+    ///
+    /// The last search term will not necessarily correlate to the cached organisations, as it may relate to an unsuccessful search,
+    /// which will not empty the cache
     private var lastOrganisationSearchTerm: String?
-    // TODO: Remove dummy data
+    /// Organisations retrieved from the server in the last successful search
     private var organisations: [Organisation] = []
     
     // MARK: - GitHubSiteServing
@@ -102,6 +114,7 @@ final class GitHubSiteService: GitHubSiteServing {
     
     // MARK: - Private Helpers
     
+    /// Possible errors thrown by the
     private enum DataFetchError: Error {
         /// Indicates an error within URLSession.shared.dataTask(with:completionHandler:)
         case urlSessionError(Error)
@@ -113,18 +126,20 @@ final class GitHubSiteService: GitHubSiteServing {
         case notFound
     }
     
+    /// Fetches data from the given URL, returning an error instead if one is thrown
     private func fetchData(from url: URL, completionHandler: @escaping (Result<Data, DataFetchError>) -> Void) {
         let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
             if let error = error {
-                // data & response are invalid, so they don't have to be checked
+                // data & response will be are invalid, so they don't have to be checked
                 completionHandler(.failure(.urlSessionError(error)))
                 return
             }
             
             guard let response = response as? HTTPURLResponse else  {
-                // this should never happen
+                // this should never happen; `URLSession.shared.dataTask(with:)` always returns an instance `HTTPURLResponse` for the value of `response`
                 return
             }
+            
             switch response.statusCode {
             case 200:
                 guard let data = data else {
