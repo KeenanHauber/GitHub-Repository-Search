@@ -12,12 +12,12 @@ final class OrganisationSearchScene {
     
     // MARK: - Dependencies
     
-    private let gitHubSiteService: GitHubSiteService
-    private let wireframe: Wireframe
+    let gitHubSiteService: GitHubSiteServing
+    let wireframe: Wireframe
     
     // MARK: - Lifecycle
     
-    init(gitHubSiteService: GitHubSiteService, wireframe: Wireframe) {
+    init(gitHubSiteService: GitHubSiteServing, wireframe: Wireframe) {
         self.gitHubSiteService = gitHubSiteService
         self.wireframe = wireframe
     }

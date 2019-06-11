@@ -12,7 +12,7 @@ import Foundation
 /// separately.
 ///
 /// TODO: - remove the `repositories` property from the data layer's model, since it isn't included in the GitHub API data structure
-struct Organisation: Decodable {
+struct Organisation: Decodable, Equatable {
     /// The name of the organisation
     let name: String
     

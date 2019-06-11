@@ -17,7 +17,7 @@ final class OrganisationSearchInteractor: OrganisationSearchInteracting {
     
     // MARK: - Dependencies
     
-    private let gitHubSiteService: GitHubSiteService
+    private let gitHubSiteService: GitHubSiteServing
     private let presenter: OrganisationSearchPresenting
     private let router: OrganisationSearchRouting
     
@@ -28,7 +28,7 @@ final class OrganisationSearchInteractor: OrganisationSearchInteracting {
     
     // MARK: - Lifecycle
     
-    init(presenter: OrganisationSearchPresenting, router: OrganisationSearchRouting, gitHubSiteService: GitHubSiteService) {
+    init(presenter: OrganisationSearchPresenting, router: OrganisationSearchRouting, gitHubSiteService: GitHubSiteServing) {
         self.presenter = presenter
         self.gitHubSiteService = gitHubSiteService
         self.router = router

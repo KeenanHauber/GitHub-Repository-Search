@@ -13,11 +13,11 @@ final class Wireframe {
     
     // MARK: - Dependencies
     
-    private let gitHubSiteService: GitHubSiteService
+    let gitHubSiteService: GitHubSiteServing
     
     // MARK: - Lifecycle
     
-    init(gitHubSiteService: GitHubSiteService) {
+    init(gitHubSiteService: GitHubSiteServing) {
         self.gitHubSiteService = gitHubSiteService
     }
     

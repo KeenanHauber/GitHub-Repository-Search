@@ -12,9 +12,9 @@ final class RepositorySearchResultsScene {
     
     // MARK: - Dependencies
     
-    private let gitHubSiteService: GitHubSiteServing
-    private let organisation: Organisation
-    private let wireframe: Wireframe
+    let gitHubSiteService: GitHubSiteServing
+    let organisation: Organisation
+    let wireframe: Wireframe
     
     // MARK: - Lifecycle
     
