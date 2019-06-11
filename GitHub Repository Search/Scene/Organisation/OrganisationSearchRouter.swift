@@ -16,8 +16,8 @@ final class OrganisationSearchRouter: OrganisationSearchRouting {
     
     // MARK: - Dependencies
     
-    private weak var sourceViewController: UIViewController?
-    private let wireframe: Wireframe
+    weak var sourceViewController: UIViewController?
+    let wireframe: Wireframe
     
     // MARK: - Lifecycle
     

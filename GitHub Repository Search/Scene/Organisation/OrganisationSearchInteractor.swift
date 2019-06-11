@@ -10,16 +10,16 @@ import Foundation
 
 protocol OrganisationSearchInteracting {
     func searchForOrganisations(named searchTerm: String)
-    func selectedOrganisationAt(row: Int)
+    func userSelectedOrganisationAt(row: Int)
 }
 
 final class OrganisationSearchInteractor: OrganisationSearchInteracting {
     
     // MARK: - Dependencies
     
-    private let gitHubSiteService: GitHubSiteServing
-    private let presenter: OrganisationSearchPresenting
-    private let router: OrganisationSearchRouting
+    let gitHubSiteService: GitHubSiteServing
+    let presenter: OrganisationSearchPresenting
+    let router: OrganisationSearchRouting
     
     // MARK: - Properties
     
@@ -37,21 +37,20 @@ final class OrganisationSearchInteractor: OrganisationSearchInteracting {
     // MARK: - OrganisationSearchInteracting
     
     func searchForOrganisations(named searchTerm: String) {
+        presenter.presentFetchState(.fetching)
+        
         gitHubSiteService.fetchOrganisations(searchTerm: searchTerm, refresh: false, completionHandler: { result in
             switch result {
             case .success(let organisations):
                 self.organisations = organisations
-                self.presenter.presentFetchState(.success)
-                self.presenter.presentOrganisations(organisations)
+                self.presenter.presentFetchState(.success(organisations))
             case .failure(let error):
-                print(error.localizedDescription)
-                self.presenter.presentFetchState(.failure)
+                self.presenter.presentFetchState(.failure(error))
             }
         })
-        presenter.presentFetchState(.fetching)
     }
     
-    func selectedOrganisationAt(row: Int) {
+    func userSelectedOrganisationAt(row: Int) {
         router.routeToRepositorySearchResults(for: organisations[row])
     }
 }

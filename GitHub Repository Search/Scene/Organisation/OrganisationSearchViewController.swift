@@ -9,8 +9,12 @@
 import UIKit
 
 protocol OrganisationSearchDisplay: AnyObject {
-    /// Displays the list of organisations on-screen
+    /// Displays the list of organisations on-screen. Assumes a successful fetch
     func displayOrganisations(_ organisations: [String])
+    /// Displays the error message on-screen.
+    func displayErrorMessage(_ message: String)
+    /// Indicates that the current results are invalid and that new results are being fetched
+    func displayBusyState()
 }
 
 class OrganisationSearchViewController: UITableViewController, OrganisationSearchDisplay, UISearchBarDelegate {
@@ -59,16 +63,13 @@ class OrganisationSearchViewController: UITableViewController, OrganisationSearc
         }
     }
     
-    func displayFetchSucceeded() {
-        // stop spinner
+    func displayErrorMessage(_ message: String) {
+        // TODO: Display error message to the user
+        print(message)
     }
     
-    func displayFetchFailed() {
-        // stop spinner
-    }
-    
-    func displayFetchInProgress() {
-        // Start spinner
+    func displayBusyState() {
+        // todo
     }
     
     // MARK: - UISearchBarDelegate
@@ -102,6 +103,6 @@ class OrganisationSearchViewController: UITableViewController, OrganisationSearc
     // MARK: - UITableViewDelegate
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        interactor.selectedOrganisationAt(row: indexPath.row)
+        interactor.userSelectedOrganisationAt(row: indexPath.row)
     }
 }

@@ -9,10 +9,8 @@
 import Foundation
 
 protocol OrganisationSearchPresenting {
-    /// Formats the organisation data for presentation and instructs the `OrganisationSearchDisplay` to display it appropriately
-    func presentOrganisations(_ organisations: [Organisation])
     /// Instructs the `OrganisationSearchDisplay` on actions that should be taken based on the state
-    func presentFetchState(_ fetchState: FetchState)
+    func presentFetchState(_ fetchState: FetchState<[Organisation], Error>)
 }
 
 final class OrganisationSearchPresenter: OrganisationSearchPresenting {
@@ -20,7 +18,7 @@ final class OrganisationSearchPresenter: OrganisationSearchPresenting {
     // MARK: - Dependencies
     
     // weak to prevent Display -> Interactor -> Presenter -> Display strong retain cycle
-    private weak var display: OrganisationSearchDisplay?
+    weak var display: OrganisationSearchDisplay?
     
     // MARK: - Lifecycle
     
@@ -30,14 +28,14 @@ final class OrganisationSearchPresenter: OrganisationSearchPresenting {
     
     // MARK: - OrganisationSearchPresenting
     
-    func presentFetchState(_ fetchState: FetchState) {
-        #warning("incomplete implementation")
-//        switch fetchState {
-//            
-//        }
-    }
-    
-    func presentOrganisations(_ organisations: [Organisation]) {
-        display?.displayOrganisations(organisations.map { $0.name })
+    func presentFetchState(_ fetchState: FetchState<[Organisation], Error>) {
+        switch fetchState {
+        case .fetching:
+            display?.displayBusyState()
+        case let .failure(error):
+            display?.displayErrorMessage(error.localizedDescription)
+        case let .success(organisations):
+            display?.displayOrganisations(organisations.map { $0.name })
+        }
     }
 }
