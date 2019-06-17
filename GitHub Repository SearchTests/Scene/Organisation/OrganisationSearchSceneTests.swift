@@ -15,8 +15,9 @@ final class OrganisationSearchSceneTests: XCTestCase {
         // given
         
         let gitHubSiteServiceDummy = GitHubSiteServiceDummy()
-        let wireframe = Wireframe(gitHubSiteService: gitHubSiteServiceDummy)
-        let scene = OrganisationSearchScene(gitHubSiteService: gitHubSiteServiceDummy, wireframe: wireframe)
+        let scenePresentingDummy = ScenePresentingDummy()
+        let wireframeDummy = WireframeDummy()
+        let scene = OrganisationSearchScene(gitHubSiteService: gitHubSiteServiceDummy, wireframe: wireframeDummy, scenePresenter: scenePresentingDummy)
         
         // when
         
@@ -36,6 +37,9 @@ final class OrganisationSearchSceneTests: XCTestCase {
         
         let router = try expect(interactor.router).as(OrganisationSearchRouter.self)
         expect(router.sourceViewController).is(organisationsSearchViewController)
-        expect(router.wireframe).isSameObject(as: wireframe)
+        let scenePresenter = try expect(router.scenePresenter).as(ScenePresentingDummy.self)
+        expect(scenePresenter).isSameObject(as: scenePresentingDummy)
+        let wireframe = try expect(router.wireframe).as(WireframeDummy.self)
+        expect(wireframe).isSameObject(as: wireframeDummy)
     }
 }

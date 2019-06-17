@@ -14,7 +14,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        let wireframe = Wireframe(gitHubSiteService: GitHubSiteService())
+        let wireframe = DefaultWireframe(
+            gitHubSiteService: GitHubSiteService(),
+            urlOpener: UIApplication.shared,
+            scenePresenter: ScenePresenter()
+        )
         let viewController = wireframe.organisationSearchScene().build()
         let navigationController = UINavigationController(rootViewController: viewController)
         

@@ -16,9 +16,10 @@ final class RepositorySearchResultsSceneTests: XCTestCase {
         
         let organisation = Organisation(name: "", repositories: nil)
         let gitHubSiteServiceDummy = GitHubSiteServiceDummy()
-        let wireframe = Wireframe(gitHubSiteService: gitHubSiteServiceDummy)
+        let urlOpeningDummy = URLOpeningDummy()
+        let wireframe = WireframeDummy()
         
-        let scene = RepositorySearchResultsScene(organisation: organisation, gitHubSiteService: gitHubSiteServiceDummy, wireframe: wireframe)
+        let scene = RepositorySearchResultsScene(organisation: organisation, gitHubSiteService: gitHubSiteServiceDummy, wireframe: wireframe, urlOpener: urlOpeningDummy)
         
         // when
         
