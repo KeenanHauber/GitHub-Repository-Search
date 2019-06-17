@@ -12,7 +12,10 @@ import Foundation
 /// separately.
 ///
 /// TODO: - remove the `repositories` property from the data layer's model, since it isn't included in the GitHub API data structure
-struct Organisation: Decodable, Equatable {
+class Organisation: Decodable, Equatable {
+    
+    // MARK: - Properties
+    
     /// The name of the organisation
     let name: String
     
@@ -21,6 +24,23 @@ struct Organisation: Decodable, Equatable {
     ///
     /// This value is not decoded from the
     var repositories: [Repository]?
+    
+    // MARK: - Lifecycle
+    
+    init(name: String, repositories: [Repository]?) {
+        self.name = name
+        self.repositories = repositories
+    }
+    
+    // MARK: - Equatable
+    
+    static func == (lhs: Organisation, rhs: Organisation) -> Bool {
+        return lhs.name == rhs.name && lhs.repositories == rhs.repositories
+    }
+    
+    // MARK: - Decodable
+    
+    #warning("TODO: Separate the Data layer model from the domain layer model")
     
     enum CodingKeys: String, CodingKey {
         case name = "login"

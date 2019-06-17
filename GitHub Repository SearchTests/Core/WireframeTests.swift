@@ -26,7 +26,7 @@ final class WireframeTests: XCTestCase {
         // given
         let gitHubSiteService = GitHubSiteServiceDummy()
         let organisation = Organisation(name: "OrganisationName", repositories: [
-            Repository(name: "RepositoryName", url: URL(staticString: "www.google.com"), htmlURL: URL(staticString: "www.otherwebsite.com"))
+            Repository(name: "RepositoryName", htmlURL: URL(staticString: "www.repository.com"))
             ])
         let wireframe = Wireframe(gitHubSiteService: gitHubSiteService)
         

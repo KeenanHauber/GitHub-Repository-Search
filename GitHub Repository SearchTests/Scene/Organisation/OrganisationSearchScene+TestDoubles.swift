@@ -1,5 +1,5 @@
 //
-//  Organisation+TestDoubles.swift
+//  OrganisationSearchScene+TestDoubles.swift
 //  GitHub Repository SearchTests
 //
 //  Created by Keenan Hauber on 11/6/19.

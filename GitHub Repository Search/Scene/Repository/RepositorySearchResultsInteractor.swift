@@ -22,16 +22,14 @@ final class RepositorySearchResultsInteractor: RepositorySearchResultsInteractin
     
     // MARK: - Dependencies
     
-    private let service: GitHubSiteServing
-    private let presenter: RepositorySearchResultsPresenting
-    private let router: RepositorySearchResultsRouting
+    let service: GitHubSiteServing
+    let presenter: RepositorySearchResultsPresenting
+    let router: RepositorySearchResultsRouting
     
     // MARK: - Properties
     
     /// The organisation that owns the repositories that will be searched for and presented
-    private let organisation: Organisation
-    /// Cached repositories from the previous fetch
-    private var repositories: [Repository] = []
+let organisation: Organisation
     
     // MARK: - Lifecycle
     
@@ -45,19 +43,23 @@ final class RepositorySearchResultsInteractor: RepositorySearchResultsInteractin
     // MARK: - RepositorySearchResultsInteracting
     
     func loadOrganisationRepositories() {
-        service.fetchRepositories(forOrganisationNamed: organisation.name, completionHandler: { result in
+        service.fetchRepositories(for: organisation, refresh: false, completionHandler: { [weak self] result in
+            guard let self = self else {
+                return
+            }
             switch result {
             case let .success(repositories):
-                self.repositories = repositories
+                self.organisation.repositories = repositories
                 self.presenter.presentRepositories(repositories)
             case let .failure(error):
-                self.repositories = []
+                self.organisation.repositories = []
                 self.presenter.presentError(error)
             }
         })
     }
     
     func selectResult(at index: Int) {
-        router.routeToURL(repositories[index].htmlURL)
+        #warning("Force unwrapped optional: please rework this")
+        router.routeToURL(organisation.repositories![index].htmlURL)
     }
 }

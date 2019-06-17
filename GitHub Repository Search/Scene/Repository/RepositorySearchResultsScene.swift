@@ -1,5 +1,5 @@
 //
-//  RepositoryScene.swift
+//  RepositorySearchResultsScene.swift
 //  GitHub Repository Search
 //
 //  Created by Keenan Hauber on 9/6/19.
@@ -28,9 +28,9 @@ final class RepositorySearchResultsScene {
     
     /// Constructs the repository search results scene and returns its view controller so it may be presented
     func build() -> UIViewController {
-        let viewController = RepositorySearchViewController()
+        let viewController = RepositorySearchResultsViewController()
         let presenter = RepositorySearchResultsPresenter(display: viewController)
-        let router = RepositorySearchResultsRouter(sourceViewController: viewController)
+        let router = RepositorySearchResultsRouter()
         viewController.interactor = RepositorySearchResultsInteractor(organisation: organisation, service: gitHubSiteService, presenter: presenter, router: router)
         return viewController
     }

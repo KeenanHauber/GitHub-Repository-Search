@@ -69,7 +69,7 @@ class OrganisationSearchViewController: UITableViewController, OrganisationSearc
     }
     
     func displayBusyState() {
-        // todo
+        // TODO: Indicate to the user that the app is busy
     }
     
     // MARK: - UISearchBarDelegate

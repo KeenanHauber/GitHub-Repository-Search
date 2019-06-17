@@ -11,11 +11,11 @@ import UIKit
 protocol RepositorySearchResultsDisplay: AnyObject {
     /// Displays the list of repository names to the user
     /// - parameter results: a list of repository names returned by the search
-    func displayResults(_ results: [String])
+    func displayRepositoryNames(_ results: [String])
     #warning("No valid way to handle error cases provided")
 }
 
-final class RepositorySearchViewController: UITableViewController, RepositorySearchResultsDisplay {
+final class RepositorySearchResultsViewController: UITableViewController, RepositorySearchResultsDisplay {
     
     // MARK: - Constants
     
@@ -34,7 +34,7 @@ final class RepositorySearchViewController: UITableViewController, RepositorySea
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: RepositorySearchViewController.reuseIdentifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: RepositorySearchResultsViewController.reuseIdentifier)
         tableView.estimatedRowHeight = 44
         tableView.rowHeight = UITableView.automaticDimension
         
@@ -45,7 +45,7 @@ final class RepositorySearchViewController: UITableViewController, RepositorySea
     
     // MARK: - RepositorySearchResultsDisplay
     
-    func displayResults(_ results: [String]) {
+    func displayRepositoryNames(_ results: [String]) {
         executeOnMain(target: self) { display in
             display.repositories = results
             display.tableView.reloadData()
@@ -63,7 +63,7 @@ final class RepositorySearchViewController: UITableViewController, RepositorySea
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: RepositorySearchViewController.reuseIdentifier, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: RepositorySearchResultsViewController.reuseIdentifier, for: indexPath)
 
         cell.textLabel?.text = repositories[indexPath.row]
         cell.textLabel?.lineBreakMode = .byWordWrapping

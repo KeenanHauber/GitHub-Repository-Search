@@ -38,8 +38,8 @@ extension XCTestCase {
     
     /// Records a value that may be compared against an expectation, providing a useful failure
     /// message for ease of debugging
-    func expect<T>(_ actual: Optional<T>, file: StaticString? = nil, line: UInt? = nil) -> Maybe<T> {
-        return Maybe(value: actual)
+    func expect<T>(_ maybe: Optional<T>, file: StaticString? = nil, line: UInt? = nil) -> Maybe<T> {
+        return Maybe(value: maybe)
     }
     
     /// A wrapper for optional values, allowing expectations to be tested upon them

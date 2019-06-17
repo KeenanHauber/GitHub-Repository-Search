@@ -13,19 +13,12 @@ protocol GitHubSiteServing {
     /// Returns a list of public repositories for the given organisation, in order of creation. If a list of repositories
     /// have already been fetched, the completion handler will be called synchronously and immediately. This may be overriden
     /// by setting `refresh` to true, in which case the service will fetch new data anyway.
-    func fetchRepositories(forOrganisationNamed organisationName: String, refresh: Bool, completionHandler: @escaping  (Result<[Repository], Error>) -> Void)
+    func fetchRepositories(for organisation: Organisation, refresh: Bool, completionHandler: @escaping (Result<[Repository], Error>) -> Void)
     
     /// Returns a list of organisations containing the given search term in their name.
     ///
     /// - parameter searchTerm: the text to 
     func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void)
-}
-
-// Default implementation
-extension GitHubSiteServing {
-    func fetchRepositories(forOrganisationNamed organisationName: String, refresh: Bool = false, completionHandler: @escaping  (Result<[Repository], Error>) -> Void) {
-        fetchRepositories(forOrganisationNamed: organisationName, refresh: refresh, completionHandler: completionHandler)
-    }
 }
 
 /// The default implementation of the `GitHubSiteServing` protocol
@@ -87,9 +80,8 @@ final class GitHubSiteService: GitHubSiteServing {
         }
     }
     
-    func fetchRepositories(forOrganisationNamed organisationName: String, refresh: Bool = false, completionHandler: @escaping  (Result<[Repository], Error>) -> Void) {
-        guard let organisation = organisations.filter({ $0.name == organisationName }).first,
-            let organisationRepositoriesURL = GitHubSiteService.organisationRepositoriesURL(for: organisation) else {
+    func fetchRepositories(for organisation: Organisation, refresh: Bool = false, completionHandler: @escaping  (Result<[Repository], Error>) -> Void) {
+        guard let organisationRepositoriesURL = GitHubSiteService.organisationRepositoriesURL(for: organisation) else {
             return
         }
         

@@ -15,16 +15,6 @@ protocol RepositorySearchResultsRouting {
 /// Default router for the RepositorySearchResultsScene.
 final class RepositorySearchResultsRouter: RepositorySearchResultsRouting {
     
-    // MARK: - Dependencies
-    
-    private weak var sourceViewController: UIViewController?
-    
-    // MARK: - Lifecycle
-    
-    init(sourceViewController: UIViewController) {
-        self.sourceViewController = sourceViewController
-    }
-    
     // MARK: - RepositorySearchResultsRouting
     
     /// Opens the given url.
@@ -35,6 +25,7 @@ final class RepositorySearchResultsRouter: RepositorySearchResultsRouting {
     /// allows urls to be opened in a single location and to be dependent on domain-level logic executed in the interactor. It also allows
     /// simplified analytics, since all analytics recording can be triggered by events in the interactor.
     func routeToURL(_ url: URL) {
+        #warning("untested code")
         executeOnMain(target: self) { _ in
             // This can be abstracted out for the sake of testing.
             UIApplication.shared.open(url)

@@ -19,7 +19,7 @@ final class RepositorySearchResultsPresenter: RepositorySearchResultsPresenting 
   
     // MARK: - Dependencies
     
-    private weak var display: RepositorySearchResultsDisplay?
+    weak var display: RepositorySearchResultsDisplay?
     
     // MARK: Lifecycle
     
@@ -31,14 +31,16 @@ final class RepositorySearchResultsPresenter: RepositorySearchResultsPresenting 
     
     func presentRepositories(_ repositories: [Repository]) {
         if repositories.count > 0 {
-            display?.displayResults(repositories.map { $0.name })
+            display?.displayRepositoryNames(repositories.map { $0.name })
         } else {
-            #warning("May allow invalid selection: Display assumes results are valid.")
-            display?.displayResults(["No repositories found"])
+            #warning("May allow invalid selection: Display assumes it is receiving a valid list of rows; the interactor will have no cached repositories, creating an invalid index and therefore a crash.")
+            #warning("String is not wrapped by a StringKey, preventing localisation and re-use.")
+            display?.displayRepositoryNames(["No repositories found"])
         }
     }
     
     func presentError(_ error: Error) {
-        display?.displayResults([error.localizedDescription])
+        #warning("May allow invalid selection: Display assumes it is receiving a valid list of rows; the interactor will have no cached repositories, creating an invalid index and therefore a crash.")
+        display?.displayRepositoryNames([error.localizedDescription])
     }
 }

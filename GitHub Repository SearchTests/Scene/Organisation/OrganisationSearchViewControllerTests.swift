@@ -27,8 +27,9 @@ final class OrganisationSearchViewControllerTests: XCTestCase {
         
         // then
         
+        #warning("this doesn't actually test whether reloadData() has been called, or what the table is actually displaying")
         expect(viewController.tableView(tableView, numberOfRowsInSection: 0)).is(3)
-        expect(viewController.tableView.delegate === viewController).is(true)
+        expect(viewController.tableView.dataSource === viewController).is(true)
         expect(viewController.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 0)).textLabel?.text).is(organisations[0])
         expect(viewController.tableView(tableView, cellForRowAt: IndexPath(row: 1, section: 0)).textLabel?.text).is(organisations[1])
         expect(viewController.tableView(tableView, cellForRowAt: IndexPath(row: 2, section: 0)).textLabel?.text).is(organisations[2])
