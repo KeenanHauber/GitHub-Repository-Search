@@ -12,7 +12,7 @@ import Foundation
 // MARK: - Dummies
 
 final class GitHubSiteServiceDummy: GitHubSiteServing {
-    func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {}
+    func fetchOrganisations(withNamesContaining searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {}
     func fetchRepositories(for organisation: Organisation, refresh: Bool, completionHandler: @escaping (Result<[Repository], Error>) -> Void) {}
 }
 
@@ -28,7 +28,7 @@ final class GitHubSiteServiceSpy: GitHubSiteServing {
         parametersFor_fetchRepositories.append((organisation, refresh, completionHandler))
     }
     
-    func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {
+    func fetchOrganisations(withNamesContaining searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {
         parametersFor_fetchOrganisations.append((searchTerm, refresh, completionHandler))
     }
 }
@@ -51,7 +51,7 @@ final class TestGitHubSiteService: GitHubSiteServing {
         }
     }
     
-    func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {
+    func fetchOrganisations(withNamesContaining searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {
         if let fetchOrganisationsResult = fetchOrganisationsResult {
             completionHandler(fetchOrganisationsResult)
         }

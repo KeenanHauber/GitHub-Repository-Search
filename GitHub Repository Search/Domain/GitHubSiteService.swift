@@ -10,15 +10,32 @@ import Foundation
 
 /// An abstraction of network communications designed to give access to the GitHub API.
 protocol GitHubSiteServing {
-    /// Returns a list of public repositories for the given organisation, in order of creation. If a list of repositories
-    /// have already been fetched, the completion handler will be called synchronously and immediately. This may be overriden
-    /// by setting `refresh` to true, in which case the service will fetch new data anyway.
+    /**
+     Asynchrounously fetches a list of public repositories for the given organisation, in order of creation.
+     
+     - parameter organisation: the organisation for which associated repositories will be fetched
+     - parameter refresh: forces data to be fetched from the server, even if there is cached data
+     - parameter completionHandler: called when the fetch has completed
+     
+     Repositories for a fetch are automatically cached in the organisation object. If a list of repositories
+     have already been fetched, the completion handler will be called synchronously with no new query being executed.
+     This may be overriden by setting `refresh` to true, in which case the service will fetch new data anyway.
+     */
     func fetchRepositories(for organisation: Organisation, refresh: Bool, completionHandler: @escaping (Result<[Repository], Error>) -> Void)
+ 
     
-    /// Returns a list of organisations containing the given search term in their name.
-    ///
-    /// - parameter searchTerm: the text to 
-    func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void)
+    /**
+     Asynchronously a list of organisations matching the search term from GitHub.
+     
+     - parameter searchTerm: filter text to identify a set of organisations, by matching it against their name
+     - parameter refresh: forces data to be fetched from the server, even if there is cached data
+     - parameter completionHandler: called when the fetch has completed
+     
+     Organisations for a search term are automatically cached to save re-fetching data that has already been successfully fetched. If a search is executed twice
+     and the first was successful, completion handler will be called synchronously with no new query being executed. A proper fetch may be forced by setting
+     `refresh` to `true`.
+     */
+    func fetchOrganisations(withNamesContaining searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void)
 }
 
 /// The default implementation of the `GitHubSiteServing` protocol
@@ -39,7 +56,17 @@ final class GitHubSiteService: GitHubSiteServing {
     
     /// Attempts to construct a URL to search for organisations containing the given search term in their name
     private static func organisationSearchURL(for searchTerm: String) -> URL? {
-        return URL(string: "https://api.github.com/search/users?q=\(searchTerm)+in:login+type:org")
+        return URL(string: "https://api.github.com/search/users?q=\(searchTerm.replacingOccurrences(of: " ", with: "%20"))+in:login+type:org")
+    }
+    
+    // MARK: - Dependencies
+    
+    let httpClient: HTTPClient
+    
+    // MARK: - Lifecycle
+    
+    init(httpClient: HTTPClient) {
+        self.httpClient = httpClient
     }
     
     // MARK: - Properties
@@ -50,25 +77,26 @@ final class GitHubSiteService: GitHubSiteServing {
     /// which will not empty the cache
     private var lastOrganisationSearchTerm: String?
     /// Organisations retrieved from the server in the last successful search
-    private var organisations: [Organisation] = []
+    private var organisationsRetrievedByLastSearch: [Organisation] = []
     
     // MARK: - GitHubSiteServing
     
-    func fetchOrganisations(searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {
+    func fetchOrganisations(withNamesContaining searchTerm: String, refresh: Bool, completionHandler: @escaping (Result<[Organisation], Error>) -> Void) {
         guard let organisationSearchURL = GitHubSiteService.organisationSearchURL(for: searchTerm) else {
             return
         }
         
         if refresh == false && lastOrganisationSearchTerm == searchTerm {
-            completionHandler(.success(organisations))
+            completionHandler(.success(organisationsRetrievedByLastSearch))
             return
         } else {
-            fetchData(from: organisationSearchURL) { result in
+            lastOrganisationSearchTerm = searchTerm
+            httpClient.fetchData(from: organisationSearchURL) { result in
                 switch result {
                 case let .success(data):
                     do {
                         let organisations = try JSONDecoder().decode(SearchResults<Organisation>.self, from: data).items
-                        self.organisations = organisations
+                        self.organisationsRetrievedByLastSearch = organisations
                         completionHandler(.success(organisations))
                     } catch {
                         completionHandler(.failure(error))
@@ -88,7 +116,7 @@ final class GitHubSiteService: GitHubSiteServing {
         if refresh == false, let repositories = organisation.repositories {
             completionHandler(.success(repositories))
         } else {
-            fetchData(from: organisationRepositoriesURL, completionHandler: { result in
+            httpClient.fetchData(from: organisationRepositoriesURL, completionHandler: { result in
                 switch result {
                 case let .success(data):
                     do {
@@ -102,51 +130,5 @@ final class GitHubSiteService: GitHubSiteServing {
                 }
             })
         }
-    }
-    
-    // MARK: - Private Helpers
-    
-    /// Possible errors thrown by the
-    private enum DataFetchError: Error {
-        /// Indicates an error within URLSession.shared.dataTask(with:completionHandler:)
-        case urlSessionError(Error)
-        /// Indicates a successful request (code 200) with no data returned
-        case noData
-        /// Indicates a response code 400
-        case badRequest
-        /// Indicates a 404 error
-        case notFound
-    }
-    
-    /// Fetches data from the given URL, returning an error instead if one is thrown
-    private func fetchData(from url: URL, completionHandler: @escaping (Result<Data, DataFetchError>) -> Void) {
-        let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
-            if let error = error {
-                // data & response will be are invalid, so they don't have to be checked
-                completionHandler(.failure(.urlSessionError(error)))
-                return
-            }
-            
-            guard let response = response as? HTTPURLResponse else  {
-                // this should never happen; `URLSession.shared.dataTask(with:)` always returns an instance `HTTPURLResponse` for the value of `response`
-                return
-            }
-            
-            switch response.statusCode {
-            case 200:
-                guard let data = data else {
-                    completionHandler(.failure(.noData))
-                    return
-                }
-                completionHandler(.success(data))
-            case 404:
-                completionHandler(.failure(.notFound))
-            default:
-                print("Unknown response code: \(response.statusCode)")
-            }
-        }
-        
-        // Triggers the fetch
-        task.resume()
     }
 }

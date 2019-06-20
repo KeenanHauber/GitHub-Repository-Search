@@ -16,7 +16,7 @@ import Foundation
 /// To keep the Search API fast for everyone, GitHub limits how long any individual query can run. For queries that exceed the time
 /// limit, the API returns the matches that were already found prior to the timeout, and the response has the incomplete_results
 /// property set to true.
-struct SearchResults<ItemType: Decodable & Equatable>: Decodable, Equatable {
+struct SearchResults<ItemType: Codable & Equatable>: Codable, Equatable {
     
     // MARK: - Properties
     

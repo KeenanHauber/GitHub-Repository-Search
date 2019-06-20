@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let wireframe = DefaultWireframe(
-            gitHubSiteService: GitHubSiteService(),
+            gitHubSiteService: GitHubSiteService(httpClient: Something()),
             urlOpener: UIApplication.shared,
             scenePresenter: ScenePresenter()
         )

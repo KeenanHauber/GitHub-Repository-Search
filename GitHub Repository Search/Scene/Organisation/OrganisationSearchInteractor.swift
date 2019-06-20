@@ -39,7 +39,7 @@ final class OrganisationSearchInteractor: OrganisationSearchInteracting {
     func searchForOrganisations(named searchTerm: String) {
         presenter.presentFetchState(.fetching)
         
-        gitHubSiteService.fetchOrganisations(searchTerm: searchTerm, refresh: false, completionHandler: { result in
+        gitHubSiteService.fetchOrganisations(withNamesContaining: searchTerm, refresh: false, completionHandler: { result in
             switch result {
             case .success(let organisations):
                 self.organisations = organisations
